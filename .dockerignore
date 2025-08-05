@@ -1,0 +1,23 @@
+# Ignore build artifacts
+target/
+*.log
+
+# Maven wrapper (not used in your case)
+.mvn/
+mvnw
+mvnw.cmd
+
+# IDE and editor settings
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+
+# OS and tool junk
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
