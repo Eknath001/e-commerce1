@@ -14,13 +14,18 @@ services:
       - mysql_data:/var/lib/mysql
     networks:
       - backend
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-pSct#2306"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   springboot-app:
     build: .
     container_name: springboot_container
     depends_on:
-      - mysql
-
+      mysql:
+        condition: service_healthy
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql_container:3306/shopping_db
       SPRING_DATASOURCE_USERNAME: root
