@@ -1,32 +1,14 @@
-# ----------- Build Stage -----------
-FROM maven:3.9.11-amazoncorretto-17-al2023 AS build
-
-WORKDIR /app
-
-# Copy pom.xml and resolve dependencies first (caching optimization)
-COPY pom.xml .
-RUN mvn dependency:go-offline -B
-
-# Copy source code
-COPY src ./src
-
-# Build the application (skip tests for faster build)
-RUN mvn clean package -DskipTests -B
-
-
-# ----------- Run Stage -----------
+# Use the official OpenJDK 17 slim image as base
 FROM openjdk:17-jdk-slim
 
-WORKDIR /app
+# Argument for the JAR file path (built by Maven/Gradle)
+ARG JAR_FILE=target/Shopping_Cart-0.0.1-SNAPSHOT.jar
 
-# Install debugging tools (optional)
-RUN apt-get update && apt-get install -y netcat-traditional && rm -rf /var/lib/apt/lists/*
+# Copy the JAR file from the build context to the image and rename it
+COPY ${JAR_FILE} Shopping_Cart.jar
 
-# Copy the built JAR from the build stage
-COPY --from=build /app/target/Shopping_Cart-0.0.1-SNAPSHOT.jar app.jar
-
-# Expose the application port
+# Expose port 8080 (Spring Boot default)
 EXPOSE 8080
 
-# Run the JAR with optimized settings
-ENTRYPOINT ["java", "--enable-native-access=ALL-UNNAMED", "-Xms512m", "-Xmx1024m", "-jar", "app.jar"]
+# Set the entry point to run the application
+ENTRYPOINT ["java", "-jar", "Shopping_Cart.jar"]
