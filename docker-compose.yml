@@ -3,7 +3,7 @@ version: '3.8'
 services:
   mysql:
     image: mysql:8.0
-    container_name: localhost
+    container_name: mysql_container
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: Sct#2306
@@ -27,7 +27,7 @@ services:
       mysql:
         condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/shopping_db
+      SPRING_DATASOURCE_URL: jdbc:mysql://127.0.0.1:3306/shopping_db
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: Sct#2306
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
