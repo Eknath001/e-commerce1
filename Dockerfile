@@ -1,14 +1,12 @@
-# Use the official OpenJDK 17 slim image as base
+# Stage 1: Build with Maven
+FROM maven:3.9.4-eclipse-temurin-17 AS build
+WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -DskipTests
+
+# Stage 2: Run the app
 FROM openjdk:17-jdk-slim
-
-# Argument for the JAR file path (built by Maven/Gradle)
-ARG JAR_FILE=target/Shopping_Cart-0.0.1-SNAPSHOT.jar
-
-# Copy the JAR file from the build context to the image and rename it
-COPY ${JAR_FILE} Shopping_Cart.jar
-
-# Expose port 8080 (Spring Boot default)
+COPY --from=build /app/target/Shopping_Cart-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8080
-
-# Set the entry point to run the application
-ENTRYPOINT ["java", "-jar", "Shopping_Cart.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
